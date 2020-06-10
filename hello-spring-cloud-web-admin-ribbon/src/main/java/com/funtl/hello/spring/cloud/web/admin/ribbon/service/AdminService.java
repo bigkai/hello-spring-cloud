@@ -1,5 +1,6 @@
 package com.funtl.hello.spring.cloud.web.admin.ribbon.service;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -10,7 +11,12 @@ public class AdminService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @HystrixCommand(fallbackMethod = "sayErr")
     public String sayHi(String message) {
         return restTemplate.getForObject("http://hello-spring-cloud-service-admin/hi?message=" + message, String.class);
+    }
+
+    private String sayErr(String message) {
+        return String.format("Hi,your message is : %s", message);
     }
 }
